@@ -64,3 +64,158 @@ return d.innerHTML;
 </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaForge AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080b18;color:white;font-family:Arial,sans-serif}
+header{padding:22px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292943}
+.logo{font-size:24px;font-weight:bold;color:#a995ff}
+select{background:#171c32;color:white;padding:10px;border:1px solid #454b6c;border-radius:9px}
+.hero{text-align:center;padding:85px 20px}
+h1{font-size:clamp(38px,7vw,60px)}
+h1 span{color:#a995ff}
+p{color:#b5b9d0;line-height:1.6}
+.btn{background:#8065ff;color:white;padding:14px 22px;border:0;border-radius:10px;cursor:pointer;font-weight:bold}
+section{max-width:950px;margin:35px auto;padding:20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.card,.chat{background:#171c32;padding:23px;border-radius:15px;border:1px solid #292943}
+.card h3{color:#ad9cff}
+.chat input{width:70%;max-width:100%;padding:13px;border-radius:8px;border:0;background:#080b18;color:white}
+#messages{min-height:100px;overflow-wrap:anywhere}
+footer{text-align:center;padding:35px;color:#858ba5}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">✦ NovaForge AI</div>
+<select id="language" onchange="changeLanguage(this.value)">
+<option value="fr">🇫🇷 Français</option>
+<option value="en">🇬🇧 English</option>
+</select>
+</header>
+
+<div class="hero">
+<h1 id="title">Donne vie à tes <span>idées.</span></h1>
+<p id="subtitle">Imagine, crée et développe tes projets avec l'intelligence artificielle.</p>
+<a href="#projects"><button class="btn" id="start">Commencer gratuitement</button></a>
+</div>
+
+<section id="projects">
+<h2 id="projectsTitle">Que veux-tu créer ?</h2>
+<div class="cards">
+<div class="card">
+<h3 id="siteTitle">🌐 Site internet</h3>
+<p id="siteText">Imagine ton prochain site web.</p>
+</div>
+<div class="card">
+<h3 id="gameTitle">🎮 Jeu vidéo</h3>
+<p id="gameText">Invente ton propre univers.</p>
+</div>
+<div class="card">
+<h3 id="ideaTitle">💡 Nouvelle idée</h3>
+<p id="ideaText">Transforme tes idées en projets.</p>
+</div>
+</div>
+</section>
+
+<section>
+<h2 id="assistantTitle">✦ Assistant NovaForge</h2>
+<div class="chat">
+<p id="messages">🤖 Bonjour ! Quel projet souhaites-tu créer ?</p>
+<input id="question" placeholder="Écris ton idée...">
+<button class="btn" id="send" onclick="sendMessage()">Envoyer</button>
+</div>
+</section>
+
+<footer id="footer">© 2026 NovaForge AI — Imagine. Create. Innovate.</footer>
+
+<script>
+const translations={
+fr:{
+title:'Donne vie à tes <span>idées.</span>',
+subtitle:"Imagine, crée et développe tes projets avec l'intelligence artificielle.",
+start:"Commencer gratuitement",
+projectsTitle:"Que veux-tu créer ?",
+siteTitle:"🌐 Site internet",
+siteText:"Imagine ton prochain site web.",
+gameTitle:"🎮 Jeu vidéo",
+gameText:"Invente ton propre univers.",
+ideaTitle:"💡 Nouvelle idée",
+ideaText:"Transforme tes idées en projets.",
+assistantTitle:"✦ Assistant NovaForge",
+welcome:"🤖 Bonjour ! Quel projet souhaites-tu créer ?",
+placeholder:"Écris ton idée...",
+send:"Envoyer",
+reply:"Merci pour ton idée ! Notre assistant IA complet arrive bientôt.",
+footer:"© 2026 NovaForge AI — Imagine. Create. Innovate."
+},
+en:{
+title:'Bring your <span>ideas to life.</span>',
+subtitle:"Imagine, create and develop your projects with artificial intelligence.",
+start:"Start for free",
+projectsTitle:"What do you want to create?",
+siteTitle:"🌐 Website",
+siteText:"Imagine your next website.",
+gameTitle:"🎮 Video game",
+gameText:"Invent your own universe.",
+ideaTitle:"💡 New idea",
+ideaText:"Turn your ideas into projects.",
+assistantTitle:"✦ NovaForge Assistant",
+welcome:"🤖 Hello! What project would you like to create?",
+placeholder:"Write your idea...",
+send:"Send",
+reply:"Thanks for your idea! Our full AI assistant is coming soon.",
+footer:"© 2026 NovaForge AI — Imagine. Create. Innovate."
+}
+};
+
+let currentLanguage="fr";
+
+function changeLanguage(lang){
+currentLanguage=lang;
+const t=translations[lang];
+document.documentElement.lang=lang;
+document.getElementById("title").innerHTML=t.title;
+document.getElementById("subtitle").textContent=t.subtitle;
+document.getElementById("start").textContent=t.start;
+document.getElementById("projectsTitle").textContent=t.projectsTitle;
+document.getElementById("siteTitle").textContent=t.siteTitle;
+document.getElementById("siteText").textContent=t.siteText;
+document.getElementById("gameTitle").textContent=t.gameTitle;
+document.getElementById("gameText").textContent=t.gameText;
+document.getElementById("ideaTitle").textContent=t.ideaTitle;
+document.getElementById("ideaText").textContent=t.ideaText;
+document.getElementById("assistantTitle").textContent=t.assistantTitle;
+document.getElementById("messages").textContent=t.welcome;
+document.getElementById("question").placeholder=t.placeholder;
+document.getElementById("send").textContent=t.send;
+document.getElementById("footer").textContent=t.footer;
+}
+
+function sendMessage(){
+const input=document.getElementById("question");
+const messages=document.getElementById("messages");
+const value=input.value.trim();
+if(!value)return;
+const user=document.createElement("p");
+user.textContent="👤 "+value;
+messages.appendChild(user);
+const answer=document.createElement("p");
+answer.textContent="🤖 "+translations[currentLanguage].reply;
+messages.appendChild(answer);
+input.value="";
+}
+const browserLanguage=navigator.language.toLowerCase();
+document.getElementById("language").value=
+browserLanguage.startsWith("en")?"en":"fr";
+changeLanguage(document.getElementById("language").value);
+</script>
+</body>
+</html>
