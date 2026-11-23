@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaForge AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080b18;color:white;font-family:Arial,sans-serif}
+header{padding:22px;text-align:center;border-bottom:1px solid #292943}
+.logo{font-size:26px;font-weight:bold;color:#a995ff}
+.hero{text-align:center;padding:75px 20px}
+h1{font-size:48px}
+h1 span{color:#a995ff}
+p{color:#b5b9d0;line-height:1.6}
+.btn{background:#8065ff;color:white;padding:15px 25px;border:0;border-radius:10px}
+section{max-width:850px;margin:35px auto;padding:20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.card{background:#171c32;padding:22px;border-radius:15px}
+.card h3{color:#ad9cff}
+.chat{background:#171c32;padding:20px;border-radius:15px}
+input{width:65%;padding:13px;border-radius:8px;border:0}
+button{cursor:pointer}
+</style>
+</head>
+<body>
+<header><div class="logo">✦ NovaForge AI</div></header>
+<div class="hero">
+<h1>Donne vie à tes <span>idées.</span></h1>
+<p>Imagine, crée et développe tes projets avec l'intelligence artificielle.</p>
+<a href="#projets"><button class="btn">Commencer gratuitement</button></a>
+</div>
+<section id="projets">
+<h2>Que veux-tu créer ?</h2>
+<div class="cards">
+<div class="card"><h3>🌐 Site internet</h3><p>Imagine ton prochain site web.</p></div>
+<div class="card"><h3>🎮 Jeu vidéo</h3><p>Invente ton propre univers.</p></div>
+<div class="card"><h3>💡 Nouvelle idée</h3><p>Transforme tes idées en projets.</p></div>
+</div>
+</section>
+<section>
+<h2>✦ Assistant NovaForge</h2>
+<div class="chat">
+<p id="messages">🤖 Bonjour ! Quel projet souhaites-tu créer ?</p>
+<input id="question" placeholder="Écris ton idée...">
+<button class="btn" onclick="sendMessage()">Envoyer</button>
+</div>
+</section>
+<script>
+function sendMessage(){
+let input=document.getElementById("question");
+let messages=document.getElementById("messages");
+if(!input.value.trim())return;
+messages.innerHTML+="<br>👤 "+escapeText(input.value);
+messages.innerHTML+="<br>🤖 Merci pour ton idée !";
+input.value="";
+}
+function escapeText(t){
+let d=document.createElement("div");
+d.textContent=t;
+return d.innerHTML;
+}
+</script>
+</body>
+</html>
