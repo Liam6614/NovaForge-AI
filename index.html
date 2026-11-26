@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,215 +6,286 @@
 <title>NovaForge AI</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080b18;color:white;font-family:Arial,sans-serif}
-header{padding:22px;text-align:center;border-bottom:1px solid #292943}
-.logo{font-size:26px;font-weight:bold;color:#a995ff}
-.hero{text-align:center;padding:75px 20px}
-h1{font-size:48px}
-h1 span{color:#a995ff}
-p{color:#b5b9d0;line-height:1.6}
-.btn{background:#8065ff;color:white;padding:15px 25px;border:0;border-radius:10px}
-section{max-width:850px;margin:35px auto;padding:20px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
-.card{background:#171c32;padding:22px;border-radius:15px}
-.card h3{color:#ad9cff}
-.chat{background:#171c32;padding:20px;border-radius:15px}
-input{width:65%;padding:13px;border-radius:8px;border:0}
-button{cursor:pointer}
-</style>
-</head>
-<body>
-<header><div class="logo">✦ NovaForge AI</div></header>
-<div class="hero">
-<h1>Donne vie à tes <span>idées.</span></h1>
-<p>Imagine, crée et développe tes projets avec l'intelligence artificielle.</p>
-<a href="#projets"><button class="btn">Commencer gratuitement</button></a>
-</div>
-<section id="projets">
-<h2>Que veux-tu créer ?</h2>
-<div class="cards">
-<div class="card"><h3>🌐 Site internet</h3><p>Imagine ton prochain site web.</p></div>
-<div class="card"><h3>🎮 Jeu vidéo</h3><p>Invente ton propre univers.</p></div>
-<div class="card"><h3>💡 Nouvelle idée</h3><p>Transforme tes idées en projets.</p></div>
-</div>
-</section>
-<section>
-<h2>✦ Assistant NovaForge</h2>
-<div class="chat">
-<p id="messages">🤖 Bonjour ! Quel projet souhaites-tu créer ?</p>
-<input id="question" placeholder="Écris ton idée...">
-<button class="btn" onclick="sendMessage()">Envoyer</button>
-</div>
-</section>
-<script>
-function sendMessage(){
-let input=document.getElementById("question");
-let messages=document.getElementById("messages");
-if(!input.value.trim())return;
-messages.innerHTML+="<br>👤 "+escapeText(input.value);
-messages.innerHTML+="<br>🤖 Merci pour ton idée !";
-input.value="";
-}
-function escapeText(t){
-let d=document.createElement("div");
-d.textContent=t;
-return d.innerHTML;
-}
-</script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaForge AI</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#080b18;color:white;font-family:Arial,sans-serif}
-header{padding:22px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292943}
-.logo{font-size:24px;font-weight:bold;color:#a995ff}
-select{background:#171c32;color:white;padding:10px;border:1px solid #454b6c;border-radius:9px}
-.hero{text-align:center;padding:85px 20px}
-h1{font-size:clamp(38px,7vw,60px)}
-h1 span{color:#a995ff}
-p{color:#b5b9d0;line-height:1.6}
-.btn{background:#8065ff;color:white;padding:14px 22px;border:0;border-radius:10px;cursor:pointer;font-weight:bold}
-section{max-width:950px;margin:35px auto;padding:20px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
-.card,.chat{background:#171c32;padding:23px;border-radius:15px;border:1px solid #292943}
-.card h3{color:#ad9cff}
-.chat input{width:70%;max-width:100%;padding:13px;border-radius:8px;border:0;background:#080b18;color:white}
-#messages{min-height:100px;overflow-wrap:anywhere}
-footer{text-align:center;padding:35px;color:#858ba5}
+body{margin:0;background:#090d1b;color:white;font-family:Arial,sans-serif}
+header{height:70px;display:flex;align-items:center;gap:15px;padding:0 18px;border-bottom:1px solid #252b43}
+.logo{font-size:21px;font-weight:bold;color:#aa96ff}
+button,select{cursor:pointer}
+.iconbtn{background:#1b2035;color:white;border:0;padding:11px 14px;border-radius:10px;font-size:20px}
+.spacer{flex:1}
+select{background:#1b2035;color:white;border:1px solid #343b58;padding:10px;border-radius:9px}
+main{max-width:850px;margin:65px auto;padding:20px;text-align:center}
+h1{font-size:clamp(32px,6vw,50px);margin-bottom:12px}
+.subtitle{color:#aeb5cc;line-height:1.6}
+.editor{background:#151b30;border:1px solid #343b58;border-radius:17px;padding:20px;margin-top:35px;text-align:left}
+textarea{width:100%;height:140px;resize:vertical;background:transparent;border:0;outline:0;color:white;font:16px Arial}
+textarea::placeholder{color:#8992ac}
+.actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.primary{background:#8065ff;color:white;border:0;border-radius:10px;padding:13px 19px;font-weight:bold}
+.secondary{background:#272d48;color:white;border:0;border-radius:10px;padding:12px 15px}
+.suggestions{margin-top:30px;text-align:left}
+.suggestions h3{color:#b9aaff}
+.idea{display:inline-block;background:#1b2035;color:#d8d5ff;border:1px solid #343b58;padding:11px;margin:5px;border-radius:20px;cursor:pointer}
+#result{margin-top:20px;text-align:left;background:#151b30;padding:18px;border-radius:12px;display:none;overflow-wrap:anywhere;line-height:1.6}
+#overlay{display:none;position:fixed;inset:0;background:#0009;z-index:4}
+#overlay.open{display:block}
+#menu{position:fixed;z-index:5;top:0;left:-290px;width:270px;height:100%;background:#11172a;padding:22px;transition:left .25s}
+#menu.open{left:0}
+.menuitem{display:block;width:100%;text-align:left;padding:16px;margin:7px 0;background:#1b2035;color:white;border:0;border-radius:10px;font-size:15px}
+.program{background:#151b30;padding:17px;border-radius:12px;margin:12px 0;text-align:left;overflow-wrap:anywhere}
+.program button{float:right}
+.page{display:none}
+.page.active{display:block}
+footer{padding:30px;text-align:center;color:#77809b;font-size:13px}
+@media(max-width:600px){main{margin:35px auto}.actions button{flex:1}}
 </style>
 </head>
 <body>
 
 <header>
+<button class="iconbtn" onclick="toggleMenu()">☰</button>
 <div class="logo">✦ NovaForge AI</div>
-<select id="language" onchange="changeLanguage(this.value)">
-<option value="fr">🇫🇷 Français</option>
-<option value="en">🇬🇧 English</option>
+<div class="spacer"></div>
+<select id="language" onchange="setLanguage(this.value)">
+<option value="fr">🇫🇷 FR</option>
+<option value="en">🇬🇧 EN</option>
+<option value="es">🇪🇸 ES</option>
 </select>
 </header>
 
-<div class="hero">
-<h1 id="title">Donne vie à tes <span>idées.</span></h1>
-<p id="subtitle">Imagine, crée et développe tes projets avec l'intelligence artificielle.</p>
-<a href="#projects"><button class="btn" id="start">Commencer gratuitement</button></a>
+<div id="overlay" onclick="toggleMenu()"></div>
+
+<aside id="menu">
+<h2 class="logo">✦ NovaForge AI</h2>
+<button class="menuitem" onclick="showPage('home')">⌂ <span data-t="home">Accueil</span></button>
+<button class="menuitem" onclick="showPage('programs')">▣ <span data-t="programs">Mes programmes</span></button>
+<button class="menuitem" onclick="showPage('ideas')">✦ <span data-t="ideas">Galerie d'idées</span></button>
+<button class="menuitem" onclick="showPage('settings')">⚙ <span data-t="settings">Paramètres</span></button>
+<button class="menuitem" onclick="showPage('help')">? <span data-t="help">Aide</span></button>
+</aside>
+
+<main id="home" class="page active">
+<h1 data-t="welcome">Que voulez-vous créer ?</h1>
+<p class="subtitle" data-t="subtitle">Décrivez votre idée et laissez NovaForge AI vous aider à lui donner vie.</p>
+
+<div class="editor">
+<textarea id="prompt" data-placeholder="placeholder" placeholder="Décrivez votre projet..."></textarea>
+<div class="actions">
+<button class="secondary" onclick="reformulate()" data-t="rewrite">✦ Reformuler ma demande</button>
+<button class="primary" onclick="createProject()" data-t="create">Créer mon projet →</button>
+</div>
 </div>
 
-<section id="projects">
-<h2 id="projectsTitle">Que veux-tu créer ?</h2>
-<div class="cards">
-<div class="card">
-<h3 id="siteTitle">🌐 Site internet</h3>
-<p id="siteText">Imagine ton prochain site web.</p>
-</div>
-<div class="card">
-<h3 id="gameTitle">🎮 Jeu vidéo</h3>
-<p id="gameText">Invente ton propre univers.</p>
-</div>
-<div class="card">
-<h3 id="ideaTitle">💡 Nouvelle idée</h3>
-<p id="ideaText">Transforme tes idées en projets.</p>
-</div>
-</div>
-</section>
+<div id="result"></div>
 
-<section>
-<h2 id="assistantTitle">✦ Assistant NovaForge</h2>
-<div class="chat">
-<p id="messages">🤖 Bonjour ! Quel projet souhaites-tu créer ?</p>
-<input id="question" placeholder="Écris ton idée...">
-<button class="btn" id="send" onclick="sendMessage()">Envoyer</button>
+<div class="suggestions">
+<h3 data-t="suggestTitle">💡 Besoin d'inspiration ?</h3>
+<div id="suggestions"></div>
+<p id="idea" class="subtitle"></p>
 </div>
-</section>
+</main>
 
-<footer id="footer">© 2026 NovaForge AI — Imagine. Create. Innovate.</footer>
+<main id="programs" class="page">
+<h1 data-t="programTitle">Mes programmes</h1>
+<p class="subtitle" data-t="programSubtitle">Retrouvez vos projets enregistrés.</p>
+<div id="programList"></div>
+</main>
+
+<main id="ideas" class="page">
+<h1 data-t="ideasTitle">Galerie d'idées</h1>
+<p class="subtitle" data-t="ideasSubtitle">Quelques idées pour commencer.</p>
+<div id="ideaGallery"></div>
+</main>
+
+<main id="settings" class="page">
+<h1 data-t="settingsTitle">Paramètres</h1>
+<p class="subtitle" data-t="settingsSubtitle">Personnalisez votre expérience.</p>
+<p data-t="languageLabel">Langue du site</p>
+<select onchange="setLanguage(this.value)">
+<option value="fr">Français</option>
+<option value="en">English</option>
+<option value="es">Español</option>
+</select>
+</main>
+
+<main id="help" class="page">
+<h1 data-t="helpTitle">Aide</h1>
+<p class="subtitle" data-t="helpText">Écrivez votre idée, reformulez-la et enregistrez vos projets. Aucun compte n'est nécessaire.</p>
+</main>
+
+<footer>✦ NovaForge AI — Imagine. Create. Innovate.</footer>
 
 <script>
 const translations={
 fr:{
-title:'Donne vie à tes <span>idées.</span>',
-subtitle:"Imagine, crée et développe tes projets avec l'intelligence artificielle.",
-start:"Commencer gratuitement",
-projectsTitle:"Que veux-tu créer ?",
-siteTitle:"🌐 Site internet",
-siteText:"Imagine ton prochain site web.",
-gameTitle:"🎮 Jeu vidéo",
-gameText:"Invente ton propre univers.",
-ideaTitle:"💡 Nouvelle idée",
-ideaText:"Transforme tes idées en projets.",
-assistantTitle:"✦ Assistant NovaForge",
-welcome:"🤖 Bonjour ! Quel projet souhaites-tu créer ?",
-placeholder:"Écris ton idée...",
-send:"Envoyer",
-reply:"Merci pour ton idée ! Notre assistant IA complet arrive bientôt.",
-footer:"© 2026 NovaForge AI — Imagine. Create. Innovate."
+home:"Accueil",programs:"Mes programmes",ideas:"Galerie d'idées",settings:"Paramètres",help:"Aide",
+welcome:"Que voulez-vous créer ?",subtitle:"Décrivez votre idée et laissez NovaForge AI vous aider à lui donner vie.",
+placeholder:"Décrivez le site, le jeu ou le programme que vous souhaitez créer...",
+rewrite:"✦ Reformuler ma demande",create:"Créer mon projet →",
+suggestTitle:"💡 Besoin d'inspiration ?",programTitle:"Mes programmes",
+programSubtitle:"Retrouvez vos projets enregistrés.",ideasTitle:"Galerie d'idées",
+ideasSubtitle:"Quelques idées pour commencer.",settingsTitle:"Paramètres",
+settingsSubtitle:"Personnalisez votre expérience.",languageLabel:"Langue du site",
+helpTitle:"Aide",helpText:"Écrivez votre idée, reformulez-la et enregistrez vos projets. Aucun compte n'est nécessaire.",
+suggestions:["Créer un site de jeux vidéo","Créer une application de musique","Créer un jeu d'aventure","Créer une boutique en ligne","Créer un réseau social","Créer un outil de dessin"],
+empty:"Aucun programme enregistré pour le moment.",rewriteReply:"Voici une version mieux structurée de votre demande :",
+created:"Projet enregistré sur cet appareil !",save:"Enregistrer",delete:"Supprimer",emptyPrompt:"Écrivez d'abord votre idée !",deleted:"Projet supprimé."
 },
 en:{
-title:'Bring your <span>ideas to life.</span>',
-subtitle:"Imagine, create and develop your projects with artificial intelligence.",
-start:"Start for free",
-projectsTitle:"What do you want to create?",
-siteTitle:"🌐 Website",
-siteText:"Imagine your next website.",
-gameTitle:"🎮 Video game",
-gameText:"Invent your own universe.",
-ideaTitle:"💡 New idea",
-ideaText:"Turn your ideas into projects.",
-assistantTitle:"✦ NovaForge Assistant",
-welcome:"🤖 Hello! What project would you like to create?",
-placeholder:"Write your idea...",
-send:"Send",
-reply:"Thanks for your idea! Our full AI assistant is coming soon.",
-footer:"© 2026 NovaForge AI — Imagine. Create. Innovate."
+home:"Home",programs:"My projects",ideas:"Idea gallery",settings:"Settings",help:"Help",
+welcome:"What would you like to create?",subtitle:"Describe your idea and let NovaForge AI help bring it to life.",
+placeholder:"Describe the website, game or program you want to create...",
+rewrite:"✦ Improve my request",create:"Create my project →",
+suggestTitle:"💡 Need inspiration?",programTitle:"My projects",
+programSubtitle:"Find your saved projects.",ideasTitle:"Idea gallery",
+ideasSubtitle:"Some ideas to get started.",settingsTitle:"Settings",
+settingsSubtitle:"Customize your experience.",languageLabel:"Website language",
+helpTitle:"Help",helpText:"Write your idea, improve it and save your projects. No account required.",
+suggestions:["Create a video game website","Create a music app","Create an adventure game","Create an online store","Create a social network","Create a drawing tool"],
+empty:"No projects saved yet.",rewriteReply:"Here is a better structured version of your request:",
+created:"Project saved on this device!",save:"Save",delete:"Delete",emptyPrompt:"Write your idea first!",deleted:"Project deleted."
+},
+es:{
+home:"Inicio",programs:"Mis proyectos",ideas:"Galería de ideas",settings:"Ajustes",help:"Ayuda",
+welcome:"¿Qué quieres crear?",subtitle:"Describe tu idea y deja que NovaForge AI te ayude a darle vida.",
+placeholder:"Describe el sitio web, juego o programa que quieres crear...",
+rewrite:"✦ Mejorar mi solicitud",create:"Crear mi proyecto →",
+suggestTitle:"💡 ¿Necesitas inspiración?",programTitle:"Mis proyectos",
+programSubtitle:"Encuentra tus proyectos guardados.",ideasTitle:"Galería de ideas",
+ideasSubtitle:"Algunas ideas para empezar.",settingsTitle:"Ajustes",
+settingsSubtitle:"Personaliza tu experiencia.",languageLabel:"Idioma del sitio",
+helpTitle:"Ayuda",helpText:"Escribe tu idea, mejórala y guarda tus proyectos. No necesitas una cuenta.",
+suggestions:["Crear una web de videojuegos","Crear una aplicación de música","Crear un juego de aventuras","Crear una tienda online","Crear una red social","Crear una herramienta de dibujo"],
+empty:"Todavía no hay proyectos guardados.",rewriteReply:"Aquí tienes una versión mejorada de tu solicitud:",
+created:"¡Proyecto guardado en este dispositivo!",save:"Guardar",delete:"Eliminar",emptyPrompt:"¡Escribe primero tu idea!",deleted:"Proyecto eliminado."
 }
 };
 
-let currentLanguage="fr";
+let currentLanguage=navigator.language.toLowerCase().startsWith("en")?"en":navigator.language.toLowerCase().startsWith("es")?"es":"fr";
+let suggestionIndex=0;
 
-function changeLanguage(lang){
-currentLanguage=lang;
-const t=translations[lang];
-document.documentElement.lang=lang;
-document.getElementById("title").innerHTML=t.title;
-document.getElementById("subtitle").textContent=t.subtitle;
-document.getElementById("start").textContent=t.start;
-document.getElementById("projectsTitle").textContent=t.projectsTitle;
-document.getElementById("siteTitle").textContent=t.siteTitle;
-document.getElementById("siteText").textContent=t.siteText;
-document.getElementById("gameTitle").textContent=t.gameTitle;
-document.getElementById("gameText").textContent=t.gameText;
-document.getElementById("ideaTitle").textContent=t.ideaTitle;
-document.getElementById("ideaText").textContent=t.ideaText;
-document.getElementById("assistantTitle").textContent=t.assistantTitle;
-document.getElementById("messages").textContent=t.welcome;
-document.getElementById("question").placeholder=t.placeholder;
-document.getElementById("send").textContent=t.send;
-document.getElementById("footer").textContent=t.footer;
+function t(key){return translations[currentLanguage][key]||key}
+
+function setLanguage(lang){
+currentLanguage=translations[lang]?lang:"fr";
+document.documentElement.lang=currentLanguage;
+document.getElementById("language").value=currentLanguage;
+document.querySelectorAll("[data-t]").forEach(el=>{
+el.textContent=t(el.dataset.t);
+});
+document.getElementById("prompt").placeholder=t("placeholder");
+renderSuggestions();
+renderPrograms();
+renderIdeas();
 }
 
-function sendMessage(){
-const input=document.getElementById("question");
-const messages=document.getElementById("messages");
-const value=input.value.trim();
-if(!value)return;
-const user=document.createElement("p");
-user.textContent="👤 "+value;
-messages.appendChild(user);
-const answer=document.createElement("p");
-answer.textContent="🤖 "+translations[currentLanguage].reply;
-messages.appendChild(answer);
-input.value="";
+function toggleMenu(){
+document.getElementById("menu").classList.toggle("open");
+document.getElementById("overlay").classList.toggle("open");
 }
-const browserLanguage=navigator.language.toLowerCase();
-document.getElementById("language").value=
-browserLanguage.startsWith("en")?"en":"fr";
-changeLanguage(document.getElementById("language").value);
+
+function showPage(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+document.getElementById("menu").classList.remove("open");
+document.getElementById("overlay").classList.remove("open");
+if(id==="programs")renderPrograms();
+if(id==="ideas")renderIdeas();
+}
+
+function renderSuggestions(){
+const list=t("suggestions");
+const area=document.getElementById("suggestions");
+area.innerHTML="";
+list.forEach((item,i)=>{
+const b=document.createElement("button");
+b.className="idea";
+b.textContent=item;
+b.onclick=()=>{document.getElementById("prompt").value=item;showPage("home")};
+if(i===suggestionIndex%list.length){
+b.style.borderColor="#a995ff";
+}
+area.appendChild(b);
+});
+document.getElementById("idea").textContent="✦ "+list[suggestionIndex%list.length];
+}
+
+function changeSuggestions(){
+suggestionIndex=(suggestionIndex+1)%t("suggestions").length;
+renderSuggestions();
+}
+
+function reformulate(){
+const input=document.getElementById("prompt").value.trim();
+if(!input){showResult(t("emptyPrompt"));return}
+const improved=input.charAt(0).toUpperCase()+input.slice(1).replace(/[.!?]*$/,".")+
+" Je souhaite un résultat moderne, clair, facile à utiliser et adapté aux besoins des utilisateurs.";
+document.getElementById("prompt").value=improved;
+showResult(t("rewriteReply")+"\n"+improved);
+}
+
+function getProjects(){
+try{return JSON.parse(localStorage.getItem("novaforge_projects")||"[]")}
+catch(e){return []}
+}
+
+function createProject(){
+const input=document.getElementById("prompt").value.trim();
+if(!input){showResult(t("emptyPrompt"));return}
+const projects=getProjects();
+projects.unshift({id:Date.now(),name:input.slice(0,55),description:input});
+localStorage.setItem("novaforge_projects",JSON.stringify(projects));
+showResult(t("created"));
+document.getElementById("prompt").value="";
+}
+
+function showResult(message){
+const result=document.getElementById("result");
+result.style.display="block";
+result.textContent=message;
+}
+
+function renderPrograms(){
+const list=getProjects();
+const area=document.getElementById("programList");
+area.innerHTML="";
+if(!list.length){area.textContent=t("empty");return}
+list.forEach(project=>{
+const div=document.createElement("div");
+div.className="program";
+const title=document.createElement("strong");
+title.textContent=project.name;
+const desc=document.createElement("p");
+desc.textContent=project.description;
+const del=document.createElement("button");
+del.className="secondary";
+del.textContent=t("delete");
+del.onclick=()=>{
+localStorage.setItem("novaforge_projects",JSON.stringify(getProjects().filter(p=>p.id!==project.id)));
+renderPrograms();
+};
+div.append(title,del,desc);
+area.appendChild(div);
+});
+}
+
+function renderIdeas(){
+const area=document.getElementById("ideaGallery");
+area.innerHTML="";
+t("suggestions").forEach(item=>{
+const b=document.createElement("button");
+b.className="idea";
+b.textContent=item;
+b.onclick=()=>{
+document.getElementById("prompt").value=item;
+showPage("home");
+};
+area.appendChild(b);
+});
+}
+
+setLanguage(currentLanguage);
+setInterval(changeSuggestions,5000);
 </script>
 </body>
 </html>
+
