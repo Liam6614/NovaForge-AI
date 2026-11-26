@@ -533,12 +533,31 @@ function runCodePreview(){
 
   document.getElementById("codeStatus").textContent =
     "✓ Aperçu actualisé.";
+
+
+  function showPage(id) {
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+
+  const page = document.getElementById(id);
+
+  if (!page) {
+    alert("Page introuvable : " + id);
+    return;
+  }
+
+  page.classList.add("active");
+  document.getElementById("menu")?.classList.remove("open");
+  document.getElementById("overlay")?.classList.remove("open");
 }
 
-function openCodeStudio(){
+function openCodeStudio() {
   loadCodeFiles();
-  "openCodeStudio()"
-}  
+  showPage("codeStudio");
+}
+
+  
 setLanguage(currentLanguage);
 setInterval(changeSuggestions,5000);
 </script>
