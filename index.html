@@ -1,566 +1,587 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090d1b">
 <title>NovaForge AI</title>
 <style>
+:root{
+ --bg:#090d1b;--panel:#11182b;--panel2:#1b2440;
+ --border:#303a59;--text:#f5f5ff;--muted:#a5aec5;
+ --accent:#8065ff;--accent2:#aa96ff;
+}
 *{box-sizing:border-box}
-body{margin:0;background:#090d1b;color:white;font-family:Arial,sans-serif}
-header{height:70px;display:flex;align-items:center;gap:15px;padding:0 18px;border-bottom:1px solid #252b43}
-.logo{font-size:21px;font-weight:bold;color:#aa96ff}
-button,select{cursor:pointer}
-.iconbtn{background:#1b2035;color:white;border:0;padding:11px 14px;border-radius:10px;font-size:20px}
-.spacer{flex:1}
-select{background:#1b2035;color:white;border:1px solid #343b58;padding:10px;border-radius:9px}
-main{max-width:850px;margin:65px auto;padding:20px;text-align:center}
-h1{font-size:clamp(32px,6vw,50px);margin-bottom:12px}
-.subtitle{color:#aeb5cc;line-height:1.6}
-.editor{background:#151b30;border:1px solid #343b58;border-radius:17px;padding:20px;margin-top:35px;text-align:left}
-textarea{width:100%;height:140px;resize:vertical;background:transparent;border:0;outline:0;color:white;font:16px Arial}
-textarea::placeholder{color:#8992ac}
-.actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.primary{background:#8065ff;color:white;border:0;border-radius:10px;padding:13px 19px;font-weight:bold}
-.secondary{background:#272d48;color:white;border:0;border-radius:10px;padding:12px 15px}
-.suggestions{margin-top:30px;text-align:left}
-.suggestions h3{color:#b9aaff}
-.idea{display:inline-block;background:#1b2035;color:#d8d5ff;border:1px solid #343b58;padding:11px;margin:5px;border-radius:20px;cursor:pointer}
-#result{margin-top:20px;text-align:left;background:#151b30;padding:18px;border-radius:12px;display:none;overflow-wrap:anywhere;line-height:1.6}
-#overlay{display:none;position:fixed;inset:0;background:#0009;z-index:4}
-#overlay.open{display:block}
-#menu{position:fixed;z-index:5;top:0;left:-290px;width:270px;height:100%;background:#11172a;padding:22px;transition:left .25s}
-#menu.open{left:0}
-.menuitem{display:block;width:100%;text-align:left;padding:16px;margin:7px 0;background:#1b2035;color:white;border:0;border-radius:10px;font-size:15px}
-.program{background:#151b30;padding:17px;border-radius:12px;margin:12px 0;text-align:left;overflow-wrap:anywhere}
-.program button{float:right}
-.page{display:none}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+header{
+ height:68px;position:fixed;z-index:20;top:0;left:0;right:0;
+ display:flex;align-items:center;gap:15px;padding:0 18px;
+ background:#0d1222;border-bottom:1px solid var(--border)
+}
+.logo{font-size:21px;font-weight:bold}
+.logo span{color:var(--accent2)}
+.menu-button{background:none;border:0;color:white;font-size:25px}
+.header-right{margin-left:auto}
+select,input,textarea{
+ background:#0c1325;border:1px solid var(--border);
+ color:white;border-radius:9px;padding:11px;outline:none
+}
+select:focus,input:focus,textarea:focus{border-color:var(--accent)}
+.layout{padding-top:68px;min-height:100vh}
+.sidebar{
+ position:fixed;top:68px;bottom:0;left:0;width:245px;
+ padding:20px 13px;background:#0d1222;
+ border-right:1px solid var(--border);overflow:auto;
+ z-index:15;transition:.25s
+}
+.sidebar.closed{transform:translateX(-100%)}
+.nav-label{color:#78839f;font-size:11px;font-weight:bold;
+ letter-spacing:1px;padding:18px 12px 8px}
+.nav-btn{
+ display:block;width:100%;padding:12px;border:0;
+ border-radius:9px;background:transparent;color:#c5cce0;
+ text-align:left;margin:3px 0
+}
+.nav-btn:hover,.nav-btn.active{background:#242044;color:white}
+main{margin-left:245px;padding:28px;width:calc(100% - 245px)}
+.page{display:none;max-width:1250px;margin:auto}
 .page.active{display:block}
-footer{padding:30px;text-align:center;color:#77809b;font-size:13px}
-@media(max-width:600px){main{margin:35px auto}.actions button{flex:1}}
-.code-layout{display:grid;grid-template-columns:190px 1fr;gap:12px;text-align:left}
-.code-files,.code-workspace{background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:13px;min-width:0}
-.code-file{display:block;width:100%;text-align:left;padding:10px;margin:5px 0;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:8px}
-.code-file.active{border-color:var(--accent)}
-.code-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.code-tabs{display:flex;gap:8px;margin-bottom:12px}
-.code-tab{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:10px 17px;border-radius:9px}
-.code-tab.active{background:var(--accent);color:white}
-#codeEditor{width:100%;height:390px;background:#080c18;color:#d9e1ff;border:1px solid var(--border);border-radius:9px;padding:14px;font:14px monospace;resize:vertical;line-height:1.6;tab-size:2}
-#codePreview{width:100%;height:430px;background:white;border:0;border-radius:9px}
-.code-status{font-size:12px;color:var(--muted);margin-top:10px}
-@media(max-width:650px){.code-layout{grid-template-columns:1fr}#codeEditor{height:330px}}  
+h1{font-size:30px;margin:5px 0 10px}
+h2{font-size:21px}
+p{color:var(--muted);line-height:1.55}
+.subtitle{margin-top:0;margin-bottom:25px}
+.panel,.tool-card,.project-card{
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:14px;padding:20px
+}
+.hero{
+ text-align:center;padding:45px 20px;margin-bottom:28px;
+ border:1px solid #44386f;border-radius:17px;
+ background:linear-gradient(135deg,#21183e,#11182b 70%)
+}
+.hero h1{font-size:clamp(28px,5vw,42px)}
+.gradient{
+ background:linear-gradient(90deg,#c1aaff,#799fff);
+ -webkit-background-clip:text;color:transparent
+}
+.hero textarea{width:100%;min-height:115px;margin:15px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+ padding:11px 16px;border:0;border-radius:9px;
+ background:var(--accent);color:white;font-weight:bold
+}
+.btn:hover{filter:brightness(1.15)}
+.btn.secondary{background:var(--panel2);border:1px solid var(--border)}
+.btn.danger{background:#762d43}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:15px}
+.tool-card{cursor:pointer;transition:.2s}
+.tool-card:hover,.project-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.tool-icon{font-size:28px;margin-bottom:12px}
+.tool-card h3{margin:0 0 7px}
+.tool-card p{font-size:13px;margin:0}
+.field{margin-bottom:17px}
+.field label{display:block;margin-bottom:8px;color:#cbd2e7}
+.field input,.field textarea,.field select{width:100%}
+.field textarea{min-height:110px}
+.item{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:12px;padding:13px;margin:9px 0;
+ background:var(--panel2);border-radius:10px
+}
+.item-actions{display:flex;gap:7px;flex-wrap:wrap}
+.setting-row{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:15px;padding:15px 0;border-bottom:1px solid var(--border)
+}
+.setting-row p{font-size:13px;margin:5px 0 0}
+.setting-row:last-child{border:0}
+.notice{background:#201a3e;border:1px solid #55468b;padding:13px;border-radius:10px}
+.studio{display:grid;grid-template-columns:185px minmax(0,1fr);gap:13px}
+.file-panel,.editor-panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.panel-title,.editor-head{padding:13px;border-bottom:1px solid var(--border)}
+.file-btn{
+ display:block;width:100%;padding:12px;border:0;
+ background:transparent;color:#c5cce0;text-align:left
+}
+.file-btn.active,.file-btn:hover{background:#282149;color:white}
+.tabs{display:flex;gap:5px;padding:10px}
+.tab{padding:9px 15px;border:0;background:transparent;color:var(--muted)}
+.tab.active{background:#29204d;color:white;border-radius:7px}
+#codeEditor{
+ width:100%;min-height:420px;display:block;
+ border:0;border-radius:0;background:#080d19;
+ color:#e0e6ff;padding:16px;resize:vertical;
+ font-family:monospace;font-size:13px;line-height:1.6
+}
+#codePreview{width:100%;height:430px;background:white;border:0}
+#previewArea{display:none}
+.status{padding:10px;color:#66d6a5;font-size:12px}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+.overlay{display:none;position:fixed;inset:68px 0 0;background:#0009;z-index:10}
+.overlay.open{display:block}
+@media(max-width:850px){
+ .sidebar{transform:translateX(-100%)}
+ .sidebar.open{transform:translateX(0)}
+ main{margin-left:0;width:100%;padding:20px 14px}
+ .studio{grid-template-columns:1fr}
+ .hero{padding:30px 14px}
+}
 </style>
 </head>
 <body>
 
 <header>
-<button class="iconbtn" onclick="toggleMenu()">☰</button>
-<div class="logo">✦ NovaForge AI</div>
-<div class="spacer"></div>
-<select id="language" onchange="setLanguage(this.value)">
-<option value="fr">🇫🇷 FR</option>
-<option value="en">🇬🇧 EN</option>
-<option value="es">🇪🇸 ES</option>
-</select>
+ <button class="menu-button" onclick="toggleMenu()">☰</button>
+ <div class="logo">NovaForge <span>AI</span></div>
+ <div class="header-right">
+  <select id="language" onchange="setLanguage(this.value)">
+   <option value="fr">🇫🇷 Français</option>
+   <option value="en">🇬🇧 English</option>
+   <option value="es">🇪🇸 Español</option>
+   <option value="de">🇩🇪 Deutsch</option>
+   <option value="it">🇮🇹 Italiano</option>
+   <option value="pt">🇵🇹 Português</option>
+   <option value="nl">🇳🇱 Nederlands</option>
+   <option value="ru">🇷🇺 Русский</option>
+   <option value="ja">🇯🇵 日本語</option>
+   <option value="zh">🇨🇳 中文</option>
+   <option value="ko">🇰🇷 한국어</option>
+   <option value="ar">🇸🇦 العربية</option>
+   <option value="tr">🇹🇷 Türkçe</option>
+   <option value="pl">🇵🇱 Polski</option>
+   <option value="el">🇬🇷 Ελληνικά</option>
+   <option value="sv">🇸🇪 Svenska</option>
+   <option value="no">🇳🇴 Norsk</option>
+   <option value="da">🇩🇰 Dansk</option>
+   <option value="hi">🇮🇳 हिन्दी</option>
+   <option value="id">🇮🇩 Indonesia</option>
+  </select>
+ </div>
 </header>
 
-<div id="overlay" onclick="toggleMenu()"></div>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
-<aside id="menu">
-<h2 class="logo">✦ NovaForge AI</h2>
-<button class="menuitem" onclick="showPage('home')">⌂ <span data-t="home">Accueil</span></button>
-<button class="menuitem" onclick="showPage('programs')">▣ <span data-t="programs">Mes programmes</span></button>
-<button class="menuitem" onclick="showPage('ideas')">✦ <span data-t="ideas">Galerie d'idées</span></button>
-<button class="menuitem" onclick="showPage('settings')">⚙ <span data-t="settings">Paramètres</span></button>
-<button class="menuitem" onclick="showPage('help')">? <span data-t="help">Aide</span></button>
-  <button class="menuitem" onclick="openCodeStudio()">
-  <span>⌨</span>
-  <span>NovaForge AI Code Studio</span>
-</button>
+<aside class="sidebar" id="sidebar">
+ <div class="nav-label">ESPACE PRINCIPAL</div>
+ <button class="nav-btn active" onclick="showPage('home',this)">⌂ Accueil</button>
+ <button class="nav-btn" onclick="showPage('projects',this)">▣ Mes projets</button>
+ <button class="nav-btn" onclick="showPage('ideas',this)">✧ Galerie d'idées</button>
+ <div class="nav-label">CRÉATION</div>
+ <button class="nav-btn" onclick="openCreator('Site internet')">🌐 Sites web</button>
+ <button class="nav-btn" onclick="openCreator('Jeu vidéo')">🎮 Jeux vidéo</button>
+ <button class="nav-btn" onclick="openCreator('Image')">🎨 Images</button>
+ <button class="nav-btn" onclick="openCreator('Vidéo')">🎬 Vidéos</button>
+ <button class="nav-btn" onclick="openCodeStudio()">⌨ Code Studio</button>
+ <div class="nav-label">APPLICATION</div>
+ <button class="nav-btn" onclick="showPage('settings',this)">⚙ Paramètres</button>
+ <button class="nav-btn" onclick="showPage('developer',this)">⌘ Développeur</button>
+ <button class="nav-btn" onclick="showPage('help',this)">? Aide</button>
 </aside>
 
-<main id="home" class="page active">
-<h1 data-t="welcome">Que voulez-vous créer ?</h1>
-<p class="subtitle" data-t="subtitle">Décrivez votre idée et laissez NovaForge AI vous aider à lui donner vie.</p>
+<main>
 
-<div class="editor">
-<textarea id="prompt" data-placeholder="placeholder" placeholder="Décrivez votre projet..."></textarea>
-<div class="actions">
-<button class="secondary" onclick="reformulate()" data-t="rewrite">✦ Reformuler ma demande</button>
-<button class="primary" onclick="createProject()" data-t="create">Créer mon projet →</button>
-</div>
-</div>
-
-<div id="result"></div>
-
-<div class="suggestions">
-<h3 data-t="suggestTitle">💡 Besoin d'inspiration ?</h3>
-<div id="suggestions"></div>
-<p id="idea" class="subtitle"></p>
-</div>
-</main>
-
-<main id="programs" class="page">
-<h1 data-t="programTitle">Mes programmes</h1>
-<p class="subtitle" data-t="programSubtitle">Retrouvez vos projets enregistrés.</p>
-<div id="programList"></div>
-</main>
-
-<main id="ideas" class="page">
-<h1 data-t="ideasTitle">Galerie d'idées</h1>
-<p class="subtitle" data-t="ideasSubtitle">Quelques idées pour commencer.</p>
-<div id="ideaGallery"></div>
-</main>
-
-<main id="settings" class="page">
-<h1 data-t="settingsTitle">Paramètres</h1>
-<p class="subtitle" data-t="settingsSubtitle">Personnalisez votre expérience.</p>
-<p data-t="languageLabel">Langue du site</p>
-<select onchange="setLanguage(this.value)">
-<option value="fr">Français</option>
-<option value="en">English</option>
-<option value="es">Español</option>
-</select>
-</main>
-
-<main id="help" class="page">
-<h1 data-t="helpTitle">Aide</h1>
-<p class="subtitle" data-t="helpText">Écrivez votre idée, reformulez-la et enregistrez vos projets. Aucun compte n'est nécessaire.</p>
-</main>
-
-  <main id="codeStudio" class="page">
-  <h1>⌨ NovaForge AI Code Studio</h1>
-  <p class="subtitle">Ton environnement professionnel de programmation.</p>
-
-  <div class="code-toolbar">
-    <button class="primary" onclick="newCodeFile()">+ Nouveau fichier</button>
-    <button class="secondary" onclick="saveCodeFiles()">Enregistrer</button>
-    <button class="secondary" onclick="downloadCodeFile()">Télécharger</button>
-    <button class="secondary" onclick="deleteCodeFile()">Supprimer</button>
+<section class="page active" id="home">
+ <div class="hero">
+  <span class="gradient">TON ESPACE DE CRÉATION</span>
+  <h1>Que veux-tu <span class="gradient">créer aujourd'hui ?</span></h1>
+  <p>Imagine ton prochain projet et donne vie à tes idées.</p>
+  <textarea id="homePrompt" placeholder="Décris ton idée ici..."></textarea>
+  <div class="actions" style="justify-content:center">
+   <button class="btn" onclick="createFromHome()">✦ Créer mon projet</button>
+   <button class="btn secondary" onclick="reformulate()">Reformuler mon idée</button>
   </div>
+ </div>
+ <h2>Outils de création</h2>
+ <div class="grid">
+  <div class="tool-card" onclick="openCreator('Site internet')"><div class="tool-icon">🌐</div><h3>Sites internet</h3><p>Prépare ton prochain site web.</p></div>
+  <div class="tool-card" onclick="openCodeStudio()"><div class="tool-icon">⌨️</div><h3>Code Studio</h3><p>Écris et teste ton code.</p></div>
+  <div class="tool-card" onclick="openCreator('Jeu vidéo')"><div class="tool-icon">🎮</div><h3>Jeux vidéo</h3><p>Imagine les règles de ton jeu.</p></div>
+  <div class="tool-card" onclick="openCreator('Image')"><div class="tool-icon">🎨</div><h3>Images</h3><p>Prépare tes idées visuelles.</p></div>
+  <div class="tool-card" onclick="openCreator('Vidéo')"><div class="tool-icon">🎬</div><h3>Vidéos</h3><p>Organise un scénario.</p></div>
+  <div class="tool-card" onclick="showPage('ideas')"><div class="tool-icon">💡</div><h3>Idées</h3><p>Trouve ton inspiration.</p></div>
+ </div>
+</section>
 
-  <div class="code-layout">
-    <div class="code-files">
-      <h3>📁 Fichiers</h3>
-      <div id="codeFileList"></div>
-    </div>
-
-    <div class="code-workspace">
-      <div class="code-tabs">
-        <button id="tabCode" class="code-tab active" onclick="switchCodeTab('code')">Code</button>
-        <button id="tabPreview" class="code-tab" onclick="switchCodeTab('preview')">Aperçu</button>
-      </div>
-
-      <div id="codePanel">
-        <div id="currentFileName" class="code-status"></div>
-        <textarea id="codeEditor" spellcheck="false"
-          placeholder="Écris ton code ici..."
-          oninput="updateCodeFile()"></textarea>
-      </div>
-
-      <div id="previewPanel" style="display:none">
-        <iframe id="codePreview" sandbox="allow-scripts allow-forms"></iframe>
-        <button class="primary" onclick="runCodePreview()">▶ Actualiser l'aperçu</button>
-      </div>
-
-      <p id="codeStatus" class="code-status">Prêt.</p>
-    </div>
+<section class="page" id="creator">
+ <h1 id="creatorTitle">Créer</h1>
+ <p class="subtitle">Décris ce que tu souhaites réaliser.</p>
+ <div class="panel">
+  <div class="field"><label>Nom du projet</label><input id="creatorName" placeholder="Nom de ton projet"></div>
+  <div class="field"><label>Description</label><textarea id="creatorDescription" placeholder="Décris ton idée..."></textarea></div>
+  <div class="actions">
+   <button class="btn" onclick="saveCreator()">Enregistrer le projet</button>
+   <button class="btn secondary" onclick="sendToStudio()">Ouvrir Code Studio</button>
   </div>
+  <p id="creatorMessage"></p>
+ </div>
+</section>
+
+<section class="page" id="projects">
+ <h1>Mes projets</h1>
+ <p class="subtitle">Tes projets enregistrés sur cet appareil.</p>
+ <div class="actions" style="margin-bottom:18px">
+  <button class="btn" onclick="showPage('creator')">+ Nouveau projet</button>
+  <button class="btn secondary" onclick="exportProjects()">Exporter</button>
+ </div>
+ <div class="grid" id="projectList"></div>
+</section>
+
+<section class="page" id="ideas">
+ <h1>Galerie d'idées</h1>
+ <p class="subtitle">Des inspirations pour tes prochaines créations.</p>
+ <div class="grid">
+  <div class="tool-card" onclick="useIdea('Un site web futuriste consacré aux jeux vidéo')"><div class="tool-icon">🎮</div><h3>Site gaming</h3><p>Un portail de jeux avec des classements.</p></div>
+  <div class="tool-card" onclick="useIdea('Une application pour organiser mes journées')"><div class="tool-icon">📱</div><h3>Application pratique</h3><p>Une application d'organisation.</p></div>
+  <div class="tool-card" onclick="useIdea('Un jeu de plateforme avec plusieurs mondes')"><div class="tool-icon">🕹️</div><h3>Jeu de plateforme</h3><p>Des niveaux et des défis.</p></div>
+  <div class="tool-card" onclick="useIdea('Un portfolio moderne pour présenter mes créations')"><div class="tool-icon">✨</div><h3>Portfolio</h3><p>Présente tes réalisations.</p></div>
+  <div class="tool-card" onclick="useIdea('Un outil pour apprendre la programmation')"><div class="tool-icon">💻</div><h3>Apprendre à coder</h3><p>Des exercices de programmation.</p></div>
+  <div class="tool-card" onclick="useIdea('Une galerie artistique avec des collections')"><div class="tool-icon">🖼️</div><h3>Galerie artistique</h3><p>Classe et présente tes images.</p></div>
+ </div>
+</section>
+
+<section class="page" id="codeStudio">
+ <h1>Code Studio</h1>
+ <p class="subtitle">Ton espace professionnel de développement.</p>
+ <div class="actions" style="margin-bottom:15px">
+  <button class="btn" onclick="saveCode()">💾 Enregistrer</button>
+  <button class="btn secondary" onclick="runCodePreview()">▶ Aperçu</button>
+  <button class="btn secondary" onclick="downloadCode()">⬇ Télécharger</button>
+  <button class="btn secondary" onclick="newCodeFile()">+ Nouveau fichier</button>
+ </div>
+ <div class="studio">
+  <div class="file-panel">
+   <div class="panel-title">Explorateur de fichiers</div>
+   <div id="fileList"></div>
+  </div>
+  <div class="editor-panel">
+   <div class="editor-head"><strong id="currentFile">index.html</strong></div>
+   <div class="tabs">
+    <button class="tab active" id="codeTab" onclick="switchTab('code')">Code</button>
+    <button class="tab" id="previewTab" onclick="switchTab('preview')">Aperçu</button>
+   </div>
+   <div id="codeArea">
+    <textarea id="codeEditor" spellcheck="false" oninput="updateCodeFile()"></textarea>
+    <div class="status" id="codeStatus">Prêt.</div>
+   </div>
+   <div id="previewArea">
+    <iframe id="codePreview" title="Aperçu du site" sandbox="allow-scripts"></iframe>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="page" id="settings">
+ <h1>Paramètres</h1>
+ <p class="subtitle">Personnalise ton application.</p>
+ <div class="panel">
+  <h2>🌍 Langue</h2>
+  <div class="setting-row"><div><strong>Langue de l'interface</strong><p>Choisis ta langue préférée.</p></div>
+   <select id="settingsLanguage" onchange="setLanguage(this.value)">
+    <option value="fr">Français</option><option value="en">English</option><option value="es">Español</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="pt">Português</option><option value="nl">Nederlands</option><option value="ru">Русский</option><option value="ja">日本語</option><option value="zh">中文</option><option value="ko">한국어</option><option value="ar">العربية</option><option value="tr">Türkçe</option><option value="pl">Polski</option><option value="el">Ελληνικά</option><option value="sv">Svenska</option><option value="no">Norsk</option><option value="da">Dansk</option><option value="hi">हिन्दी</option><option value="id">Indonesia</option>
+   </select>
+  </div>
+  <p class="notice">Les 20 langues sont proposées dans le sélecteur. Les traductions complètes de l'interface devront être intégrées progressivement.</p>
+  <hr>
+  <h2>🎨 Apparence</h2>
+  <div class="setting-row"><div><strong>Couleur principale</strong><p>Personnalise les accents de l'application.</p></div>
+   <select id="accentSelect" onchange="changeAccent(this.value)">
+    <option value="#8065ff">Violet</option><option value="#3488ff">Bleu</option><option value="#13b99a">Turquoise</option><option value="#e45ba8">Rose</option><option value="#e39b35">Orange</option>
+   </select>
+  </div>
+  <hr>
+  <h2>💾 Données</h2>
+  <div class="actions"><button class="btn secondary" onclick="exportProjects()">Exporter mes projets</button><button class="btn danger" onclick="clearProjects()">Supprimer mes projets</button></div>
+ </div>
+</section>
+
+<section class="page" id="developer">
+ <h1>Paramètres développeur</h1>
+ <p class="subtitle">Informations techniques et outils de diagnostic.</p>
+ <div class="panel">
+  <h2>Informations système</h2>
+  <p>NovaForge AI — Version 2.0</p>
+  <p>Environnement : navigateur web</p>
+  <p>Éditeur : Code Studio</p>
+  <p>Stockage : navigateur local</p>
+  <hr>
+  <h2>Diagnostic</h2>
+  <button class="btn" onclick="diagnostic()">Lancer le diagnostic</button>
+  <pre id="diagnosticResult" style="white-space:pre-wrap;color:#64d6a0"></pre>
+  <hr>
+  <h2>Connexion IA</h2>
+  <p class="notice">Aucune API d'intelligence artificielle n'est encore connectée. Une connexion sécurisée à un serveur sera nécessaire pour activer la génération réelle par IA.</p>
+ </div>
+</section>
+
+<section class="page" id="help">
+ <h1>Aide</h1>
+ <p class="subtitle">Comment utiliser NovaForge AI ?</p>
+ <div class="panel">
+  <h2>Créer un projet</h2>
+  <p>Écris ton idée sur l'accueil ou ouvre un outil de création. Tu peux ensuite enregistrer ton projet.</p>
+  <hr>
+  <h2>Utiliser Code Studio</h2>
+  <p>Modifie les fichiers HTML, CSS et JavaScript. Appuie sur Aperçu pour voir le résultat de ton site.</p>
+  <hr>
+  <h2>Sauvegarder</h2>
+  <p>Les projets et fichiers sont enregistrés dans le stockage local du navigateur utilisé.</p>
+  <hr>
+  <h2>Intelligence artificielle</h2>
+  <p>Les outils de création sont actuellement des espaces de préparation. Une API sera nécessaire pour générer automatiquement des contenus avec une IA.</p>
+ </div>
+</section>
+
+<footer>NovaForge AI · Imagine · Crée · Développe</footer>
 </main>
-  
-<footer>✦ NovaForge AI — Imagine. Create. Innovate.</footer>
+</div>
+
+<div id="toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#29204d;padding:12px 18px;border:1px solid #8065ff;border-radius:10px;display:none;z-index:50"></div>
 
 <script>
+const $=id=>document.getElementById(id);
+let projects=JSON.parse(localStorage.getItem("novaProjects")||"[]");
+let codeFiles=JSON.parse(localStorage.getItem("novaCodeFiles")||"null")||{
+ "index.html":"<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n<title>Mon site</title>\n</head>\n<body>\n<h1>Bonjour !</h1>\n<p>Mon premier site avec NovaForge AI.</p>\n</body>\n</html>",
+ "style.css":"body {\n font-family: Arial, sans-serif;\n background: #f2f2f2;\n color: #222;\n text-align: center;\n padding: 40px;\n}\nh1 { color: #8065ff; }",
+ "script.js":"console.log('Mon site fonctionne !');"
+};
+let currentFile="index.html";
+let currentTab="code";
+let currentCreator="Projet";
+let extraFiles=[];
 const translations={
-fr:{
-home:"Accueil",programs:"Mes programmes",ideas:"Galerie d'idées",settings:"Paramètres",help:"Aide",
-welcome:"Que voulez-vous créer ?",subtitle:"Décrivez votre idée et laissez NovaForge AI vous aider à lui donner vie.",
-placeholder:"Décrivez le site, le jeu ou le programme que vous souhaitez créer...",
-rewrite:"✦ Reformuler ma demande",create:"Créer mon projet →",
-suggestTitle:"💡 Besoin d'inspiration ?",programTitle:"Mes programmes",
-programSubtitle:"Retrouvez vos projets enregistrés.",ideasTitle:"Galerie d'idées",
-ideasSubtitle:"Quelques idées pour commencer.",settingsTitle:"Paramètres",
-settingsSubtitle:"Personnalisez votre expérience.",languageLabel:"Langue du site",
-helpTitle:"Aide",helpText:"Écrivez votre idée, reformulez-la et enregistrez vos projets. Aucun compte n'est nécessaire.",
-suggestions:["Créer un site de jeux vidéo","Créer une application de musique","Créer un jeu d'aventure","Créer une boutique en ligne","Créer un réseau social","Créer un outil de dessin"],
-empty:"Aucun programme enregistré pour le moment.",rewriteReply:"Voici une version mieux structurée de votre demande :",
-created:"Projet enregistré sur cet appareil !",save:"Enregistrer",delete:"Supprimer",emptyPrompt:"Écrivez d'abord votre idée !",deleted:"Projet supprimé."
-},
-en:{
-home:"Home",programs:"My projects",ideas:"Idea gallery",settings:"Settings",help:"Help",
-welcome:"What would you like to create?",subtitle:"Describe your idea and let NovaForge AI help bring it to life.",
-placeholder:"Describe the website, game or program you want to create...",
-rewrite:"✦ Improve my request",create:"Create my project →",
-suggestTitle:"💡 Need inspiration?",programTitle:"My projects",
-programSubtitle:"Find your saved projects.",ideasTitle:"Idea gallery",
-ideasSubtitle:"Some ideas to get started.",settingsTitle:"Settings",
-settingsSubtitle:"Customize your experience.",languageLabel:"Website language",
-helpTitle:"Help",helpText:"Write your idea, improve it and save your projects. No account required.",
-suggestions:["Create a video game website","Create a music app","Create an adventure game","Create an online store","Create a social network","Create a drawing tool"],
-empty:"No projects saved yet.",rewriteReply:"Here is a better structured version of your request:",
-created:"Project saved on this device!",save:"Save",delete:"Delete",emptyPrompt:"Write your idea first!",deleted:"Project deleted."
-},
-es:{
-home:"Inicio",programs:"Mis proyectos",ideas:"Galería de ideas",settings:"Ajustes",help:"Ayuda",
-welcome:"¿Qué quieres crear?",subtitle:"Describe tu idea y deja que NovaForge AI te ayude a darle vida.",
-placeholder:"Describe el sitio web, juego o programa que quieres crear...",
-rewrite:"✦ Mejorar mi solicitud",create:"Crear mi proyecto →",
-suggestTitle:"💡 ¿Necesitas inspiración?",programTitle:"Mis proyectos",
-programSubtitle:"Encuentra tus proyectos guardados.",ideasTitle:"Galería de ideas",
-ideasSubtitle:"Algunas ideas para empezar.",settingsTitle:"Ajustes",
-settingsSubtitle:"Personaliza tu experiencia.",languageLabel:"Idioma del sitio",
-helpTitle:"Ayuda",helpText:"Escribe tu idea, mejórala y guarda tus proyectos. No necesitas una cuenta.",
-suggestions:["Crear una web de videojuegos","Crear una aplicación de música","Crear un juego de aventuras","Crear una tienda online","Crear una red social","Crear una herramienta de dibujo"],
-empty:"Todavía no hay proyectos guardados.",rewriteReply:"Aquí tienes una versión mejorada de tu solicitud:",
-created:"¡Proyecto guardado en este dispositivo!",save:"Guardar",delete:"Eliminar",emptyPrompt:"¡Escribe primero tu idea!",deleted:"Proyecto eliminado."
-}
+ fr:{home:"Accueil",projects:"Mes projets",ideas:"Galerie d'idées",settings:"Paramètres",help:"Aide"},
+ en:{home:"Home",projects:"My projects",ideas:"Ideas gallery",settings:"Settings",help:"Help"},
+ es:{home:"Inicio",projects:"Mis proyectos",ideas:"Galería de ideas",settings:"Configuración",help:"Ayuda"}
 };
-
-let currentLanguage=navigator.language.toLowerCase().startsWith("en")?"en":navigator.language.toLowerCase().startsWith("es")?"es":"fr";
-let suggestionIndex=0;
-
-function t(key){return translations[currentLanguage][key]||key}
-
-function setLanguage(lang){
-currentLanguage=translations[lang]?lang:"fr";
-document.documentElement.lang=currentLanguage;
-document.getElementById("language").value=currentLanguage;
-document.querySelectorAll("[data-t]").forEach(el=>{
-el.textContent=t(el.dataset.t);
-});
-document.getElementById("prompt").placeholder=t("placeholder");
-renderSuggestions();
-renderPrograms();
-renderIdeas();
+function toast(message){
+ const t=$("toast");t.textContent=message;t.style.display="block";
+ setTimeout(()=>t.style.display="none",2500);
 }
-
 function toggleMenu(){
-document.getElementById("menu").classList.toggle("open");
-document.getElementById("overlay").classList.toggle("open");
+ $("sidebar").classList.toggle("open");
+ $("overlay").classList.toggle("open");
 }
-
-function showPage(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-document.getElementById("menu").classList.remove("open");
-document.getElementById("overlay").classList.remove("open");
-if(id==="programs")renderPrograms();
-if(id==="ideas")renderIdeas();
+function showPage(id,button){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ $(id).classList.add("active");
+ document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+ if(button)button.classList.add("active");
+ else{
+  const match=[...document.querySelectorAll(".nav-btn")].find(b=>b.getAttribute("onclick")?.includes("'"+id+"'"));
+  if(match)match.classList.add("active");
+ }
+ $("sidebar").classList.remove("open");
+ $("overlay").classList.remove("open");
+ if(id==="projects")renderProjects();
+ if(id==="codeStudio")renderFiles();
 }
-
-function renderSuggestions(){
-const list=t("suggestions");
-const area=document.getElementById("suggestions");
-area.innerHTML="";
-list.forEach((item,i)=>{
-const b=document.createElement("button");
-b.className="idea";
-b.textContent=item;
-b.onclick=()=>{document.getElementById("prompt").value=item;showPage("home")};
-if(i===suggestionIndex%list.length){
-b.style.borderColor="#a995ff";
+function saveProjects(){
+ localStorage.setItem("novaProjects",JSON.stringify(projects));
 }
-area.appendChild(b);
-});
-document.getElementById("idea").textContent="✦ "+list[suggestionIndex%list.length];
+function saveProject(){
+ const name=$("projectName")?.value.trim();
+ const description=$("projectDescription")?.value.trim();
+ const type=$("projectType")?.value;
+ if(!name||!description){toast("Remplis le nom et la description.");return;}
+ projects.unshift({id:Date.now(),name,description,type,date:new Date().toLocaleDateString("fr-FR")});
+ saveProjects();
+ $("projectName").value="";
+ $("projectDescription").value="";
+ toast("Projet enregistré !");
+ showPage("projects");
 }
-
-function changeSuggestions(){
-suggestionIndex=(suggestionIndex+1)%t("suggestions").length;
-renderSuggestions();
+function createFromHome(){
+ const idea=$("homePrompt").value.trim();
+ if(!idea){toast("Décris d'abord ton idée.");return;}
+ $("projectName").value="Nouveau projet";
+ $("projectDescription").value=idea;
+ $("projectType").value="Autre";
+ showPage("creator");
 }
-
 function reformulate(){
-const input=document.getElementById("prompt").value.trim();
-if(!input){showResult(t("emptyPrompt"));return}
-const improved=input.charAt(0).toUpperCase()+input.slice(1).replace(/[.!?]*$/,".")+
-" Je souhaite un résultat moderne, clair, facile à utiliser et adapté aux besoins des utilisateurs.";
-document.getElementById("prompt").value=improved;
-showResult(t("rewriteReply")+"\n"+improved);
+ const field=$("homePrompt");
+ if(!field.value.trim()){toast("Écris d'abord ton idée.");return;}
+ field.value="Projet : "+field.value.trim()+". Objectif : créer une réalisation claire, moderne et bien organisée.";
 }
-
-function getProjects(){
-try{return JSON.parse(localStorage.getItem("novaforge_projects")||"[]")}
-catch(e){return []}
+function openCreator(type){
+ currentCreator=type;
+ $("creatorTitle").textContent="Créer : "+type;
+ $("creatorName").value="";
+ $("creatorDescription").value="";
+ $("creatorMessage").textContent="";
+ showPage("creator");
 }
-
-function createProject(){
-const input=document.getElementById("prompt").value.trim();
-if(!input){showResult(t("emptyPrompt"));return}
-const projects=getProjects();
-projects.unshift({id:Date.now(),name:input.slice(0,55),description:input});
-localStorage.setItem("novaforge_projects",JSON.stringify(projects));
-showResult(t("created"));
-document.getElementById("prompt").value="";
+function saveCreator(){
+ const name=$("creatorName").value.trim();
+ const description=$("creatorDescription").value.trim();
+ if(!name||!description){toast("Complète les deux champs.");return;}
+ projects.unshift({id:Date.now(),name,description,type:currentCreator,date:new Date().toLocaleDateString("fr-FR")});
+ saveProjects();
+ toast("Projet enregistré !");
+ showPage("projects");
 }
-
-function showResult(message){
-const result=document.getElementById("result");
-result.style.display="block";
-result.textContent=message;
+function sendToStudio(){
+ const description=$("creatorDescription").value.trim();
+ if(description){
+  codeFiles["index.html"]="<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n<title>Mon projet</title>\n</head>\n<body>\n<h1>Mon projet</h1>\n<p>"+description.replace(/[<>&]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]))+"</p>\n</body>\n</html>";
+  saveCode();
+ }
+ openCodeStudio();
 }
-
-function renderPrograms(){
-const list=getProjects();
-const area=document.getElementById("programList");
-area.innerHTML="";
-if(!list.length){area.textContent=t("empty");return}
-list.forEach(project=>{
-const div=document.createElement("div");
-div.className="program";
-const title=document.createElement("strong");
-title.textContent=project.name;
-const desc=document.createElement("p");
-desc.textContent=project.description;
-const del=document.createElement("button");
-del.className="secondary";
-del.textContent=t("delete");
-del.onclick=()=>{
-localStorage.setItem("novaforge_projects",JSON.stringify(getProjects().filter(p=>p.id!==project.id)));
-renderPrograms();
-};
-div.append(title,del,desc);
-area.appendChild(div);
-});
+function renderProjects(){
+ const list=$("projectList");
+ if(!projects.length){list.innerHTML='<div class="empty">Aucun projet pour le moment.<br>Crée ton premier projet !</div>';return;}
+ list.innerHTML=projects.map(p=>`
+ <div class="project-card">
+  <span class="small muted">${escapeHTML(p.type||"Projet")} · ${escapeHTML(p.date||"")}</span>
+  <h3>${escapeHTML(p.name)}</h3>
+  <p>${escapeHTML(p.description)}</p>
+  <div class="actions">
+   <button class="btn secondary" onclick="openProject(${p.id})">Ouvrir</button>
+   <button class="btn danger" onclick="deleteProject(${p.id})">Supprimer</button>
+  </div>
+ </div>`).join("");
 }
-
-function renderIdeas(){
-const area=document.getElementById("ideaGallery");
-area.innerHTML="";
-t("suggestions").forEach(item=>{
-const b=document.createElement("button");
-b.className="idea";
-b.textContent=item;
-b.onclick=()=>{
-document.getElementById("prompt").value=item;
-showPage("home");
-};
-area.appendChild(b);
-});
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-
-const defaultCodeFiles = {
-  "index.html": `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Mon projet</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Bonjour !</h1>
-  <p>Mon premier projet avec NovaForge AI.</p>
-  <script src="script.js"><\/script>
-</body>
-</html>`,
-  "style.css": `body {
-  font-family: Arial, sans-serif;
-  padding: 30px;
-  background: #f1f2ff;
-  color: #222;
+function openProject(id){
+ const p=projects.find(x=>x.id===id);if(!p)return;
+ openCreator(p.type||"Projet");
+ $("creatorName").value=p.name;
+ $("creatorDescription").value=p.description;
 }
-h1 { color: #7055ee; }`,
-  "script.js": `console.log("Mon projet fonctionne !");`
-};
-
-let codeFiles = {};
-let currentCodeFile = "index.html";
-let codeTab = "code";
-
-function loadCodeFiles(){
-  try{
-    codeFiles = JSON.parse(
-      localStorage.getItem("novaforge_code_files")
-    ) || {};
-  }catch(e){
-    codeFiles = {};
-  }
-
-  if(!Object.keys(codeFiles).length){
-    codeFiles = {...defaultCodeFiles};
-  }
-
-  renderCodeFiles();
+function deleteProject(id){
+ if(!confirm("Supprimer ce projet ?"))return;
+ projects=projects.filter(p=>p.id!==id);saveProjects();renderProjects();
 }
-
-function renderCodeFiles(){
-  const area = document.getElementById("codeFileList");
-  area.innerHTML = "";
-
-  Object.keys(codeFiles).forEach(name=>{
-    const button = document.createElement("button");
-    button.className = "code-file" +
-      (name === currentCodeFile ? " active" : "");
-    button.textContent = "📄 " + name;
-
-    button.onclick = ()=>{
-      updateCodeFile();
-      currentCodeFile = name;
-      renderCodeFiles();
-    };
-
-    area.appendChild(button);
-  });
-
-  if(!codeFiles[currentCodeFile]){
-    currentCodeFile = Object.keys(codeFiles)[0];
-  }
-
-  document.getElementById("currentFileName").textContent =
-    "Fichier : " + currentCodeFile;
-
-  document.getElementById("codeEditor").value =
-    codeFiles[currentCodeFile] || "";
+function clearProjects(){
+ if(!confirm("Supprimer tous tes projets ?"))return;
+ projects=[];saveProjects();renderProjects();toast("Projets supprimés.");
 }
-
+function exportProjects(){
+ const blob=new Blob([JSON.stringify(projects,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download="novaforge-projets.json";a.click();
+ URL.revokeObjectURL(url);
+}
+function useIdea(idea){
+ $("homePrompt").value=idea;showPage("home");
+}
+function setLanguage(lang){
+ localStorage.setItem("novaLanguage",lang);
+ $("language").value=lang;
+ $("settingsLanguage").value=lang;
+ document.documentElement.lang=lang;
+ if(translations[lang]){
+  const t=translations[lang];
+  const buttons=[...document.querySelectorAll(".nav-btn")];
+  buttons[0].textContent="⌂ "+t.home;
+  buttons[1].textContent="▣ "+t.projects;
+  buttons[2].textContent="✧ "+t.ideas;
+  buttons[buttons.length-3].textContent="⚙ "+t.settings;
+  buttons[buttons.length-1].textContent="? "+t.help;
+ }else if(lang==="fr"){
+  location.reload();
+ }
+}
+function changeAccent(color){
+ document.documentElement.style.setProperty("--accent",color);
+ localStorage.setItem("novaAccent",color);
+}
 function updateCodeFile(){
-  if(!currentCodeFile)return;
-
-  codeFiles[currentCodeFile] =
-    document.getElementById("codeEditor").value;
+ codeFiles[currentFile]=$("codeEditor").value;
+ $("codeStatus").textContent="Modifications non enregistrées.";
 }
-
-function saveCodeFiles(){
-  updateCodeFile();
-
-  localStorage.setItem(
-    "novaforge_code_files",
-    JSON.stringify(codeFiles)
-  );
-
-  document.getElementById("codeStatus").textContent =
-    "✓ Projet enregistré sur cet appareil.";
+function saveCode(){
+ codeFiles[currentFile]=$("codeEditor").value;
+ localStorage.setItem("novaCodeFiles",JSON.stringify(codeFiles));
+ $("codeStatus").textContent="Fichiers enregistrés.";
+ toast("Code enregistré !");
 }
-
-function newCodeFile(){
-  const name = prompt(
-    "Nom du fichier (exemple : page.html) :"
-  );
-
-  if(!name)return;
-
-  if(!/^[a-zA-Z0-9_.-]+\.[a-zA-Z0-9]+$/.test(name)){
-    alert("Nom de fichier invalide.");
-    return;
-  }
-
-  if(codeFiles[name]){
-    alert("Ce fichier existe déjà.");
-    return;
-  }
-
-  codeFiles[name] = "";
-  currentCodeFile = name;
-  renderCodeFiles();
-  saveCodeFiles();
+function renderFiles(){
+ const list=$("fileList");
+ const files=Object.keys(codeFiles);
+ list.innerHTML=files.map(file=>`
+ <button class="file-btn ${file===currentFile?"active":""}" onclick="selectFile('${escapeHTML(file)}')">📄 ${escapeHTML(file)}</button>
+ `).join("");
+ $("currentFile").textContent=currentFile;
+ $("codeEditor").value=codeFiles[currentFile]||"";
 }
-
-function deleteCodeFile(){
-  if(!currentCodeFile)return;
-
-  if(!confirm("Supprimer " + currentCodeFile + " ?"))return;
-
-  delete codeFiles[currentCodeFile];
-
-  if(!Object.keys(codeFiles).length){
-    codeFiles = {...defaultCodeFiles};
-  }
-
-  currentCodeFile = Object.keys(codeFiles)[0];
-  renderCodeFiles();
-  saveCodeFiles();
+function selectFile(file){
+ codeFiles[currentFile]=$("codeEditor").value;
+ currentFile=file;renderFiles();
 }
-
-function downloadCodeFile(){
-  updateCodeFile();
-
-  const blob = new Blob(
-    [codeFiles[currentCodeFile]],
-    {type:"text/plain;charset=utf-8"}
-  );
-
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = currentCodeFile;
-  link.click();
-
-  URL.revokeObjectURL(url);
+function openCodeStudio(){
+ showPage("codeStudio");
+ renderFiles();
+ switchTab("code");
 }
-
-function switchCodeTab(tab){
-  updateCodeFile();
-  codeTab = tab;
-
-  document.getElementById("codePanel").style.display =
-    tab === "code" ? "block" : "none";
-
-  document.getElementById("previewPanel").style.display =
-    tab === "preview" ? "block" : "none";
-
-  document.getElementById("tabCode").classList.toggle(
-    "active", tab === "code"
-  );
-
-  document.getElementById("tabPreview").classList.toggle(
-    "active", tab === "preview"
-  );
-
-  if(tab === "preview")runCodePreview();
+function switchTab(tab){
+ currentTab=tab;
+ $("codeArea").style.display=tab==="code"?"block":"none";
+ $("previewArea").style.display=tab==="preview"?"block":"none";
+ $("codeTab").classList.toggle("active",tab==="code");
+ $("previewTab").classList.toggle("active",tab==="preview");
+ if(tab==="preview")runCodePreview();
 }
-
 function runCodePreview(){
-  updateCodeFile();
-
-  const html = codeFiles["index.html"] || "";
-  const css = codeFiles["style.css"] || "";
-  const js = codeFiles["script.js"] || "";
-
-  const previewDocument = html.replace(
-    "</head>",
-    "<style>" + css.replace(/<\/style/gi,"<\\/style") +
-    "</style></head>"
-  ).replace(
-    "</body>",
-    "<script>" +
-    js.replace(/<\/script/gi,"<\\/script") +
-    "<\/script></body>"
-  );
-
-  document.getElementById("codePreview").srcdoc =
-    previewDocument;
-
-  document.getElementById("codeStatus").textContent =
-    "✓ Aperçu actualisé.";
-
-
-  function showPage(id) {
-  document.querySelectorAll(".page").forEach(page => {
-    page.classList.remove("active");
-  });
-
-  const page = document.getElementById(id);
-
-  if (!page) {
-    alert("Page introuvable : " + id);
-    return;
-  }
-
-  page.classList.add("active");
-  document.getElementById("menu")?.classList.remove("open");
-  document.getElementById("overlay")?.classList.remove("open");
+ updateCodeFile();
+ const html=codeFiles["index.html"]||"";
+ const css=codeFiles["style.css"]||"";
+ const js=codeFiles["script.js"]||"";
+ let output=html;
+ if(/<\/head>/i.test(output)){
+  output=output.replace(/<\/head>/i,"<style>"+css.replace(/<\/style/gi,"<\\/style")+"</style></head>");
+ }else{
+  output="<style>"+css+"</style>"+output;
+ }
+ if(/<\/body>/i.test(output)){
+  output=output.replace(/<\/body>/i,"<script>"+js.replace(/<\/script/gi,"<\\/script")+"<\/script></body>");
+ }else{
+  output+="<script>"+js.replace(/<\/script/gi,"<\\/script")+"<\/script>";
+ }
+ $("codePreview").srcdoc=output;
+ $("codeStatus").textContent="Aperçu actualisé.";
+ if(currentTab!=="preview")switchTab("preview");
 }
-
-function openCodeStudio() {
-  loadCodeFiles();
-  showPage("codeStudio");
+function newCodeFile(){
+ const name=prompt("Nom du nouveau fichier (ex : app.js)");if(!name)return;
+ if(!/^[a-zA-Z0-9._-]+$/.test(name)){toast("Nom de fichier invalide.");return;}
+ if(codeFiles[name]){toast("Ce fichier existe déjà.");return;}
+ codeFiles[name]="";
+ currentFile=name;saveCode();renderFiles();switchTab("code");
 }
-
-  
-setLanguage(currentLanguage);
-setInterval(changeSuggestions,5000);
+function downloadCode(){
+ const content=codeFiles[currentFile]||"";
+ const blob=new Blob([content],{type:"text/plain"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download=currentFile;a.click();
+ URL.revokeObjectURL(url);
+}
+function diagnostic(){
+ $("diagnosticResult").textContent=
+ "Diagnostic NovaForge AI\n"+
+ "Navigateur : "+navigator.userAgent+"\n"+
+ "Stockage local : "+(typeof Storage!=="undefined"?"Disponible":"Indisponible")+"\n"+
+ "Projets : "+projects.length+"\n"+
+ "Fichiers de code : "+Object.keys(codeFiles).length+"\n"+
+ "Résultat : diagnostic terminé.";
+}
+function setInitialSettings(){
+ const lang=localStorage.getItem("novaLanguage")||"fr";
+ $("language").value=lang;$("settingsLanguage").value=lang;
+ document.documentElement.lang=lang;
+ const accent=localStorage.getItem("novaAccent");
+ if(accent){$("accentSelect").value=accent;changeAccent(accent);}
+}
+setInitialSettings();
+renderProjects();
+renderFiles();
 </script>
 </body>
 </html>
-
